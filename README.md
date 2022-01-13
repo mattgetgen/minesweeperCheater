@@ -11,7 +11,7 @@ In linux, the common directory to store this in is:
 ## Build
 
 Run `cheater.c` with arguments:
- - Required: xdemineur file path
+ - Required xdemineur file path like: `/usr/games/xdemineur`
  - optional game arguments like:
    1. `-board 16x16` (16 x 16 board)
    2. `-m 40` (number of mines: 40)

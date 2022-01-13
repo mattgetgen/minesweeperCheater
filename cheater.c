@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-
 #include <fcntl.h>
 #include <unistd.h>
 #include <string.h>
@@ -210,6 +209,7 @@ void single_step(pid_t pid) {
 
 
 void wait_for_inferior(pid_t pid) {
+    int bomb_click_count = 0;
     int time_elapsed = 0;
     int status;
     int first_stop = 1;
@@ -248,11 +248,16 @@ void wait_for_inferior(pid_t pid) {
                     flag_save_2 = poke_int3(pid, FLAG_CLICK_TWO);
                 } else {
                     if (ip - 1 == BOMB_CLICK_ADDRESS) {
+                        bomb_click_count++;
+                        //printf("Bomb click times: %d\n", bomb_click_count);
+                        //fflush(stdout);
                         unpoke_int3(pid, BOMB_CLICK_ADDRESS, bomb_save);   // remove 0xCC byte
                         set_register(pid, REG_RIP, BOMB_CLICK_ADDRESS);
 
                         bomb_reg = get_register32(pid, REG_ECX);
                         if (bomb_reg != 0) {
+                            printf("Bomb click times: %d\n", bomb_click_count);
+                            fflush(stdout);
                             set_register32(pid, REG_ECX, 0x0);
                         }
 
@@ -308,7 +313,6 @@ void validate_exe_path(const char * path) {
     if (memcmp(magic_number, ELF_MAGIC_NUMBER, 4) != 0) {
         fatal("Not an ELF file.");
     }
-
 }
 
 
